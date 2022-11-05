@@ -1,31 +1,47 @@
 import express from "express";
-import bodyParser from "body-parser"; // usado para pegar o objeto que vem do post;
 import cors from "cors";
 
-let userInfo = [];
+let userInfo = []; // essas infos só são perdidas se o server  for desligado;
 let tweetsVector = [];
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json()); // ativa o uso de bodyParser.json() no servidor;
+app.use(express.json()); // ativa o uso de json() no servidor;
 
 app.post("/sign-up", (req, resp) => {
+  const { username, avatar } = req.body;
+  if (!username || !avatar) {
+    resp.status(400).send("Todos os campos são obrigatórios");
+    return;
+  }
   userInfo.push(req.body);
-  resp.send("Ok");
+  resp.status(201).send("Ok");
 });
 
 app.get("/tweets", (req, res) => {
-  res.send(tweetsVector);
+  const auxTweetsVector =[];
+  console.log(auxTweetsVector,tweetsVector )
+  for(let i=0; i<10; i++){
+    if(tweetsVector[i]!==undefined){
+      auxTweetsVector.push(tweetsVector[i])
+    }
+  }
+  res.send(auxTweetsVector);
 });
 
 app.post("/tweets", (req, res) => {
-  console.log(req.body);
-  const postOwner = userInfo.find(
-    (element) => element.username === req.body.username
-  );
+  const { username, tweet } = req.body;
+
+  if (!username || !tweet) {
+    res.status(400).send("Todos os campos são obrigatórios!");
+    return;
+  }
+
+  const postOwner = userInfo.find((element) => element.username === username);
   const avatarOwner = postOwner.avatar;
-  tweetsVector.push({ ...req.body, avatar: avatarOwner });
-  res.send("Ok");
+  tweetsVector.unshift({ ...req.body, avatar: avatarOwner });
+  res.status(201).send("Ok");
 });
 
 app.listen(5000);
+
