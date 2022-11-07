@@ -14,6 +14,15 @@ app.post("/sign-up", (req, resp) => {
     resp.status(400).send("Todos os campos são obrigatórios");
     return;
   }
+  const isTherethisName = userInfo.some(
+    (element) => (element.username === username)
+  );
+
+  if (isTherethisName) {
+    resp.status(409).send("Usuário já cadastrado");
+    return;
+  }
+
   userInfo.push(req.body);
   resp.status(201).send("Ok");
 });
