@@ -19,11 +19,16 @@ app.post("/sign-up", (req, resp) => {
 });
 
 app.get("/tweets", (req, res) => {
-  const auxTweetsVector =[];
-  console.log(auxTweetsVector,tweetsVector )
-  for(let i=0; i<10; i++){
-    if(tweetsVector[i]!==undefined){
-      auxTweetsVector.push(tweetsVector[i])
+  const auxTweetsVector = [];
+  for (let i = 0; i < 10; i++) {
+    if (tweetsVector[i] !== undefined) {
+      console.log(tweetsVector[i])
+      // fazendo o match de avatar
+      const postOwner = userInfo.find(
+        (element) => element.username === tweetsVector[i].username
+      );
+      const avatarOwner = postOwner.avatar;
+      auxTweetsVector.push({ ...tweetsVector[i], avatar: avatarOwner });
     }
   }
   res.send(auxTweetsVector);
@@ -37,11 +42,8 @@ app.post("/tweets", (req, res) => {
     return;
   }
 
-  const postOwner = userInfo.find((element) => element.username === username);
-  const avatarOwner = postOwner.avatar;
-  tweetsVector.unshift({ ...req.body, avatar: avatarOwner });
+  tweetsVector.unshift(req.body);
   res.status(201).send("Ok");
 });
 
 app.listen(5000);
-
