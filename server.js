@@ -22,13 +22,17 @@ app.get("/tweets", (req, res) => {
   const auxTweetsVector = [];
   for (let i = 0; i < 10; i++) {
     if (tweetsVector[i] !== undefined) {
-      console.log(tweetsVector[i])
       // fazendo o match de avatar
       const postOwner = userInfo.find(
         (element) => element.username === tweetsVector[i].username
       );
-      const avatarOwner = postOwner.avatar;
-      auxTweetsVector.push({ ...tweetsVector[i], avatar: avatarOwner });
+      const formattedTweet = {
+        username: tweetsVector[i].username,
+        avatar: postOwner.avatar,
+        tweet: tweetsVector[i].tweet,
+      };
+
+      auxTweetsVector.push(formattedTweet);
     }
   }
   res.send(auxTweetsVector);
